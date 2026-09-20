@@ -179,11 +179,19 @@
 
           <div class="filter-pills" role="tablist">
             <button class="filter-pill active" data-category="all">All Web Apps</button>
-            <button class="filter-pill" data-category="saas">SaaS & Full-Stack</button>
-            <button class="filter-pill" data-category="ai">AI & ML Systems</button>
-            <button class="filter-pill" data-category="productivity">Productivity & Tools</button>
+            <button class="filter-pill" data-category="ai">AI & FinTech</button>
+            <button class="filter-pill" data-category="saas">SaaS & Systems</button>
             <button class="filter-pill" data-category="ecommerce">E-Commerce</button>
+            <button class="filter-pill" data-category="productivity">Productivity & Tools</button>
           </div>
+
+          <button id="open-add-project-btn" class="btn-primary" style="padding: 8px 18px; font-size: 0.875rem; white-space: nowrap; margin-left: auto;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Project
+          </button>
         </div>
       </div>
 
@@ -378,6 +386,117 @@
             GitHub Repository
           </a>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       Add New Project Modal Dialog
+       ========================================================================= -->
+  <div class="modal-backdrop" id="add-project-modal" role="dialog" aria-modal="true" aria-labelledby="add-modal-title">
+    <div class="modal-dialog" style="max-width: 680px;">
+      <div class="modal-header">
+        <div>
+          <h3 id="add-modal-title" style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 700;">Add Web Application</h3>
+          <span style="font-size: 0.813rem; color: var(--accent-cyan); font-weight: 600;">Instantly showcases on your live portfolio</span>
+        </div>
+        <button class="modal-close-btn" id="close-add-modal-btn" aria-label="Close add project modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form id="add-project-form">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+              <label for="new-project-title" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">Project Title *</label>
+              <input type="text" id="new-project-title" class="form-input" placeholder="e.g. Solana Arbitrage Bot" required style="width: 100%;">
+            </div>
+            <div>
+              <label for="new-project-category" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">Category *</label>
+              <select id="new-project-category" class="form-select" style="width: 100%;">
+                <option value="ai">AI & FinTech</option>
+                <option value="saas">SaaS & Systems</option>
+                <option value="ecommerce">E-Commerce</option>
+                <option value="productivity">Productivity & Tools</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label for="new-project-tagline" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">One-Line Tagline *</label>
+            <input type="text" id="new-project-tagline" class="form-input" placeholder="e.g. Real-time predictive market intelligence platform" required style="width: 100%;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+              <label for="new-project-status" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">Status *</label>
+              <select id="new-project-status" class="form-select" style="width: 100%;">
+                <option value="Production Live">Production Live</option>
+                <option value="Active Beta">Active Beta</option>
+                <option value="Active System">Active System</option>
+                <option value="Open Source">Open Source</option>
+              </select>
+            </div>
+            <div>
+              <label for="new-project-year" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">Year *</label>
+              <input type="text" id="new-project-year" class="form-input" value="2026" required style="width: 100%;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+              <label for="new-project-live" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">Live Demo URL</label>
+              <input type="url" id="new-project-live" class="form-input" placeholder="https://my-app.vercel.app" style="width: 100%;">
+            </div>
+            <div>
+              <label for="new-project-github" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">GitHub Repo URL</label>
+              <input type="url" id="new-project-github" class="form-input" placeholder="https://github.com/Ayoola1o/my-app" style="width: 100%;">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label for="new-project-tech" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">Tech Stack (comma-separated) *</label>
+            <input type="text" id="new-project-tech" class="form-input" placeholder="e.g. Next.js, TypeScript, Python, FastAPI, Docker" required style="width: 100%;">
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label for="new-project-image" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">Image / Mockup URL (Optional)</label>
+            <input type="text" id="new-project-image" class="form-input" placeholder="Paste image link, or leave blank to use default template" style="width: 100%;">
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label for="new-project-summary" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">Short Summary *</label>
+            <textarea id="new-project-summary" class="form-textarea" placeholder="1-2 sentences summarizing what this app accomplishes..." required style="width: 100%; min-height: 70px;"></textarea>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label for="new-project-highlights" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">Key Highlights (one per line)</label>
+            <textarea id="new-project-highlights" class="form-textarea" placeholder="Sub-second latency query execution
+Multi-tenant architecture with RBAC
+Automated CI/CD deployment" style="width: 100%; min-height: 70px;"></textarea>
+          </div>
+
+          <div class="modal-footer-actions" style="flex-wrap: wrap; gap: 10px;">
+            <button type="submit" class="btn-primary" style="flex: 1; justify-content: center; min-width: 180px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add to Live Portfolio
+            </button>
+            <button type="button" id="copy-project-code-btn" class="btn-secondary" style="padding: 10px 18px; font-size: 0.875rem;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+              </svg>
+              Copy Code for GitHub
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

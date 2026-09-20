@@ -1,9 +1,9 @@
 /* ==========================================================================
-   Portfolio Core JavaScript Logic
+   Portfolio Core JavaScript Logic for Ayoola Adebisi
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Elements
+  // Core Elements
   const projectsContainer = document.getElementById('projects-container');
   const filterPills = document.querySelectorAll('.filter-pill');
   const searchInput = document.getElementById('project-search');
@@ -17,24 +17,50 @@ document.addEventListener('DOMContentLoaded', () => {
   const toastContainer = document.getElementById('toast-container');
   const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
 
+  // Add Project Elements
+  const openAddProjectBtn = document.getElementById('open-add-project-btn');
+  const addProjectModal = document.getElementById('add-project-modal');
+  const closeAddModalBtn = document.getElementById('close-add-modal-btn');
+  const addProjectForm = document.getElementById('add-project-form');
+  const copyProjectCodeBtn = document.getElementById('copy-project-code-btn');
+
   let activeCategory = 'all';
   let searchQuery = '';
 
-  // 1. Theme Management (Dark by default)
+  // 1. Load Custom Projects from localStorage
+  let customProjects = [];
+  try {
+    const savedCustom = localStorage.getItem('ayoola_custom_projects');
+    if (savedCustom) {
+      customProjects = JSON.parse(savedCustom);
+    }
+  } catch (err) {
+    console.warn('Could not load custom projects from localStorage', err);
+  }
+
+  function getAllProjects() {
+    const baseProjects = (typeof portfolioProjects !== 'undefined') ? portfolioProjects : [];
+    return [...customProjects, ...baseProjects];
+  }
+
+  // 2. Theme Management (Dark by default)
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
   updateThemeIcon(savedTheme);
 
-  themeToggleBtn.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('portfolio-theme', newTheme);
-    updateThemeIcon(newTheme);
-    showToast(`Switched to ${newTheme} mode`);
-  });
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('portfolio-theme', newTheme);
+      updateThemeIcon(newTheme);
+      showToast(`Switched to ${newTheme} mode`);
+    });
+  }
 
   function updateThemeIcon(theme) {
+    if (!themeToggleBtn) return;
     if (theme === 'light') {
       themeToggleBtn.innerHTML = `
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -56,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 2. Mobile Menu Toggle
+  // 3. Mobile Menu Drawer
   if (menuToggleBtn && mobileNavDrawer) {
     menuToggleBtn.addEventListener('click', () => {
       mobileNavDrawer.classList.toggle('open');
@@ -69,18 +95,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. Render Projects
+  // 4. Render Projects Grid
   function renderProjects() {
     if (!projectsContainer) return;
 
-    const filtered = portfolioProjects.filter(project => {
+    const allProjects = getAllProjects();
+
+    const filtered = allProjects.filter(project => {
       const matchesCategory = activeCategory === 'all' || project.category === activeCategory;
       const q = searchQuery.toLowerCase();
       const matchesSearch = !q || 
         project.title.toLowerCase().includes(q) ||
         project.tagline.toLowerCase().includes(q) ||
         project.summary.toLowerCase().includes(q) ||
-        project.techStack.some(tech => tech.toLowerCase().includes(q));
+        (project.techStack && project.techStack.some(tech => tech.toLowerCase().includes(q)));
 
       return matchesCategory && matchesSearch;
     });
@@ -100,11 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const resetBtn = document.getElementById('reset-filter-btn');
       if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-          searchInput.value = '';
+          if (searchInput) searchInput.value = '';
           searchQuery = '';
           activeCategory = 'all';
           filterPills.forEach(p => p.classList.remove('active'));
-          filterPills[0].classList.add('active');
+          if (filterPills[0]) filterPills[0].classList.add('active');
           renderProjects();
         });
       }
@@ -114,23 +142,29 @@ document.addEventListener('DOMContentLoaded', () => {
     projectsContainer.innerHTML = filtered.map(project => `
       <article class="project-card glass-card" data-project-id="${project.id}">
         <div class="project-thumbnail card-media-wrapper">
-          <img src="${project.image}" alt="${project.title} Web Application Mockup" loading="lazy">
-          <span class="project-status-badge badge-${project.statusColor}">
+          <img src="${project.image || 'assets/images/project-saas.jpg'}" alt="${project.title} Preview" loading="lazy" onerror="this.src='assets/images/project-saas.jpg'">
+          <span class="project-status-badge badge-${project.statusColor || 'emerald'}">
             <span class="pulse-dot" style="background-color: #fff;"></span>
             ${project.status}
           </span>
+          ${project.isCustom ? `
+            <button class="delete-custom-btn" data-id="${project.id}" title="Remove this custom project" style="position: absolute; top: 14px; left: 14px; background: rgba(239, 68, 68, 0.85); color: white; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px; backdrop-filter: blur(4px);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              Remove
+            </button>
+          ` : ''}
         </div>
         <div class="project-content">
           <div class="project-meta-row">
-            <span class="project-category-tag">${project.categoryName}</span>
-            <span class="project-year">${project.year}</span>
+            <span class="project-category-tag">${project.categoryName || 'Web Application'}</span>
+            <span class="project-year">${project.year || '2026'}</span>
           </div>
           <h3 class="project-title">${project.title}</h3>
           <p class="project-tagline">${project.tagline}</p>
           <p class="project-summary">${project.summary}</p>
           
           <ul class="project-highlights-list">
-            ${project.highlights.slice(0, 2).map(h => `
+            ${(project.highlights || []).slice(0, 2).map(h => `
               <li class="project-highlight-item">
                 <svg class="highlight-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <polyline points="20 6 9 17 4 12"></polyline>
@@ -141,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </ul>
 
           <div class="tech-stack-row">
-            ${project.techStack.map(t => `<span class="tech-tag">${t}</span>`).join('')}
+            ${(project.techStack || []).map(t => `<span class="tech-tag">${t}</span>`).join('')}
           </div>
 
           <div class="project-actions">
@@ -152,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </svg>
               Details & Specs
             </button>
-            <a href="${project.liveUrl}" target="_blank" rel="noopener noreferrer" class="btn-card-action btn-demo">
+            <a href="${project.liveUrl || '#'}" target="_blank" rel="noopener noreferrer" class="btn-card-action btn-demo">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                 <polyline points="15 3 21 3 21 9"/>
@@ -165,16 +199,30 @@ document.addEventListener('DOMContentLoaded', () => {
       </article>
     `).join('');
 
-    // Attach click listeners to "Details & Specs" buttons
+    // Attach listeners to "Details & Specs" buttons
     document.querySelectorAll('.open-modal-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const id = e.currentTarget.getAttribute('data-id');
         openProjectModal(id);
       });
     });
+
+    // Attach listeners to custom project delete buttons
+    document.querySelectorAll('.delete-custom-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = e.currentTarget.getAttribute('data-id');
+        if (confirm('Remove this custom project from your view?')) {
+          customProjects = customProjects.filter(p => p.id !== id);
+          localStorage.setItem('ayoola_custom_projects', JSON.stringify(customProjects));
+          renderProjects();
+          showToast('Project removed from your portfolio.');
+        }
+      });
+    });
   }
 
-  // 4. Filtering & Search handlers
+  // 5. Category Filtering & Search Listeners
   filterPills.forEach(pill => {
     pill.addEventListener('click', () => {
       filterPills.forEach(p => p.classList.remove('active'));
@@ -191,9 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 5. Project Details Modal Logic
+  // 6. Project Details Modal Logic
   function openProjectModal(projectId) {
-    const project = portfolioProjects.find(p => p.id === projectId);
+    const project = getAllProjects().find(p => p.id === projectId);
     if (!project || !modalBackdrop) return;
 
     const modalTitle = document.getElementById('modal-title');
@@ -207,33 +255,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalLiveLink = document.getElementById('modal-live-link');
     const modalGithubLink = document.getElementById('modal-github-link');
 
-    modalTitle.textContent = project.title;
-    modalCategory.textContent = `${project.categoryName} • ${project.year} • ${project.status}`;
-    modalImage.src = project.image;
-    modalImage.alt = `${project.title} Preview`;
-    modalDescription.textContent = project.description;
-    modalArchitecture.textContent = project.architecture;
+    if (modalTitle) modalTitle.textContent = project.title;
+    if (modalCategory) modalCategory.textContent = `${project.categoryName || 'Web App'} • ${project.year || '2026'} • ${project.status}`;
+    if (modalImage) {
+      modalImage.src = project.image || 'assets/images/project-saas.jpg';
+      modalImage.alt = `${project.title} Preview`;
+    }
+    if (modalDescription) modalDescription.textContent = project.description || project.summary;
+    if (modalArchitecture) modalArchitecture.textContent = project.architecture || `Full stack architecture built with ${(project.techStack || []).join(', ')}.`;
 
-    modalMetrics.innerHTML = project.metrics.map(m => `
-      <div class="modal-metric-card">
-        <div class="val">${m.value}</div>
-        <div class="lbl">${m.label}</div>
-      </div>
-    `).join('');
+    if (modalMetrics) {
+      modalMetrics.innerHTML = (project.metrics || [
+        { label: "Deployment", value: "Live" },
+        { label: "Status", value: project.status },
+        { label: "Year", value: project.year || "2026" },
+        { label: "Stack", value: (project.techStack && project.techStack[0]) || "Full-Stack" }
+      ]).map(m => `
+        <div class="modal-metric-card">
+          <div class="val">${m.value}</div>
+          <div class="lbl">${m.label}</div>
+        </div>
+      `).join('');
+    }
 
-    modalHighlights.innerHTML = project.highlights.map(h => `
-      <li class="project-highlight-item" style="margin-bottom: 8px;">
-        <svg class="highlight-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        <span>${h}</span>
-      </li>
-    `).join('');
+    if (modalHighlights) {
+      modalHighlights.innerHTML = (project.highlights || []).map(h => `
+        <li class="project-highlight-item" style="margin-bottom: 8px;">
+          <svg class="highlight-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>${h}</span>
+        </li>
+      `).join('');
+    }
 
-    modalStack.innerHTML = project.techStack.map(t => `<span class="tech-tag">${t}</span>`).join('');
+    if (modalStack) {
+      modalStack.innerHTML = (project.techStack || []).map(t => `<span class="tech-tag">${t}</span>`).join('');
+    }
 
-    modalLiveLink.href = project.liveUrl;
-    modalGithubLink.href = project.githubUrl;
+    if (modalLiveLink) modalLiveLink.href = project.liveUrl || '#';
+    if (modalGithubLink) modalGithubLink.href = project.githubUrl || '#';
 
     modalBackdrop.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -251,11 +312,131 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === modalBackdrop) closeModal();
     });
   }
+
+  // 7. Add Project Modal Dialog Logic
+  if (openAddProjectBtn && addProjectModal) {
+    openAddProjectBtn.addEventListener('click', () => {
+      addProjectModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  function closeAddModal() {
+    if (!addProjectModal) return;
+    addProjectModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  if (closeAddModalBtn) closeAddModalBtn.addEventListener('click', closeAddModal);
+  if (addProjectModal) {
+    addProjectModal.addEventListener('click', (e) => {
+      if (e.target === addProjectModal) closeAddModal();
+    });
+  }
+
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Escape') {
+      closeModal();
+      closeAddModal();
+    }
   });
 
-  // 6. Skills & Journey Rendering
+  function getProjectFromForm() {
+    const title = document.getElementById('new-project-title').value.trim();
+    const category = document.getElementById('new-project-category').value;
+    const tagline = document.getElementById('new-project-tagline').value.trim();
+    const status = document.getElementById('new-project-status').value;
+    const year = document.getElementById('new-project-year').value.trim() || '2026';
+    const liveUrl = document.getElementById('new-project-live').value.trim() || '#';
+    const githubUrl = document.getElementById('new-project-github').value.trim() || '#';
+    const techRaw = document.getElementById('new-project-tech').value.trim();
+    const image = document.getElementById('new-project-image').value.trim() || 'assets/images/project-saas.jpg';
+    const summary = document.getElementById('new-project-summary').value.trim();
+    const highlightsRaw = document.getElementById('new-project-highlights').value.trim();
+
+    const techStack = techRaw.split(',').map(s => s.trim()).filter(Boolean);
+    const highlights = highlightsRaw ? highlightsRaw.split('\n').map(s => s.trim()).filter(Boolean) : [summary];
+
+    const categoryNames = {
+      'ai': 'AI & FinTech',
+      'saas': 'SaaS & Systems',
+      'ecommerce': 'E-Commerce',
+      'productivity': 'Productivity & Tools'
+    };
+
+    const statusColors = {
+      'Production Live': 'emerald',
+      'Active Beta': 'violet',
+      'Active System': 'violet',
+      'Open Source': 'cyan'
+    };
+
+    const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || ('project-' + Date.now());
+
+    return {
+      id,
+      title,
+      tagline,
+      category,
+      categoryName: categoryNames[category] || 'Web App',
+      status,
+      statusColor: statusColors[status] || 'emerald',
+      image,
+      featured: true,
+      year,
+      summary,
+      description: summary,
+      highlights,
+      techStack,
+      metrics: [
+        { label: "Deployment", value: "Live" },
+        { label: "Status", value: status },
+        { label: "Year", value: year },
+        { label: "Stack", value: techStack[0] || 'Full-Stack' }
+      ],
+      liveUrl,
+      githubUrl,
+      architecture: `Full-stack web application utilizing ${techStack.join(', ')}.`,
+      isCustom: true
+    };
+  }
+
+  if (addProjectForm) {
+    addProjectForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newProj = getProjectFromForm();
+      if (!newProj.title) return;
+
+      customProjects.unshift(newProj);
+      localStorage.setItem('ayoola_custom_projects', JSON.stringify(customProjects));
+      renderProjects();
+      closeAddModal();
+      addProjectForm.reset();
+      showToast(`🎉 "${newProj.title}" added to your live portfolio!`);
+    });
+  }
+
+  if (copyProjectCodeBtn) {
+    copyProjectCodeBtn.addEventListener('click', () => {
+      const newProj = getProjectFromForm();
+      if (!newProj.title) {
+        showToast('Please enter at least a Project Title first.');
+        return;
+      }
+      // Create clean JS code without isCustom
+      const cleanProj = { ...newProj };
+      delete cleanProj.isCustom;
+      const codeSnippet = '  ' + JSON.stringify(cleanProj, null, 2).replace(/\n/g, '\n  ') + ',';
+      
+      navigator.clipboard.writeText(codeSnippet).then(() => {
+        showToast('📋 Code copied! Ready to paste into js/projects-data.js');
+      }).catch(() => {
+        showToast('Code copied to clipboard.');
+      });
+    });
+  }
+
+  // 8. Skills & Journey Rendering
   const skillsContainer = document.getElementById('skills-container');
   if (skillsContainer && typeof technicalSkills !== 'undefined') {
     skillsContainer.innerHTML = technicalSkills.map(cat => `
@@ -290,10 +471,11 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // 7. Copy Email Interaction
+  // 9. Copy Email Interaction
   if (copyEmailBtn) {
     copyEmailBtn.addEventListener('click', () => {
-      const email = document.getElementById('email-address-text').textContent.trim();
+      const emailEl = document.getElementById('email-address-text');
+      const email = emailEl ? emailEl.textContent.trim() : 'ayoolaadebisi5@gmail.com';
       navigator.clipboard.writeText(email).then(() => {
         showToast('✓ Email address copied to clipboard!');
       }).catch(() => {
@@ -302,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 8. Contact Form Submission
+  // 10. Contact Form Submission
   if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -311,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       submitBtn.disabled = true;
       submitBtn.innerHTML = `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin" style="animation: spin 1s linear infinite;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
           <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
           <path d="M12 2a10 10 0 0 1 10 10"/>
         </svg>
@@ -323,11 +505,11 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.innerHTML = originalText;
         contactForm.reset();
         showToast('🎉 Message sent successfully! I will get back to you within 24 hours.');
-      }, 1200);
+      }, 1000);
     });
   }
 
-  // 9. Toast Helper
+  // 11. Toast Helper
   function showToast(message) {
     if (!toastContainer) return;
     const toast = document.createElement('div');
@@ -348,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3500);
   }
 
-  // 10. Scroll Spy for Navigation Links
+  // 12. Scroll Spy for Navigation Links
   const sections = document.querySelectorAll('section[id]');
   window.addEventListener('scroll', () => {
     let current = '';
