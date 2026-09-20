@@ -1330,12 +1330,22 @@ img {
 }
 
 /* ==========================================================================
-   Responsive Breakpoints
+   Responsive Breakpoints & Mobile Optimization
    ========================================================================== */
+
+/* Prevent horizontal overflow globally */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Tablet Breakpoint (<= 1024px) */
 @media (max-width: 1024px) {
   .hero-grid {
     grid-template-columns: 1fr;
     text-align: center;
+    gap: 36px;
   }
 
   .hero-description {
@@ -1353,7 +1363,7 @@ img {
   }
 
   .hero-visual-card {
-    max-width: 420px;
+    max-width: 380px;
     margin: 0 auto;
   }
 
@@ -1370,17 +1380,352 @@ img {
   }
 }
 
+/* Tablet Portrait & Large Phones (<= 768px) */
 @media (max-width: 768px) {
+  :root {
+    --header-height: 66px;
+  }
+
+  /* Header & Navigation */
   .nav-links, .header-cta-btn {
     display: none;
   }
 
   .menu-toggle-btn {
     display: flex;
+    min-width: 42px;
+    min-height: 42px;
   }
 
+  .mobile-nav-drawer {
+    display: none;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: 100%;
+    max-height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 18px 16px 28px;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 999;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .mobile-nav-drawer.open {
+    display: flex;
+    animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .mobile-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    background-color: var(--bg-surface-elevated);
+    color: var(--accent-cyan);
+  }
+
+  /* Prevent iOS Safari Auto-Zoom on Input Focus */
+  input, select, textarea,
+  .form-input, .form-select, .form-textarea, .search-input {
+    font-size: 16px !important;
+  }
+
+  /* Modals */
   .modal-metrics-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  #open-add-project-btn {
+    width: 100%;
+    margin-left: 0 !important;
+    justify-content: center;
+    min-height: 44px;
+  }
+}
+
+/* Standard Mobile Devices (<= 640px) */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .section {
+    padding: 56px 0;
+  }
+
+  .section-header {
+    margin-bottom: 32px;
+  }
+
+  .section-title {
+    font-size: clamp(1.7rem, 6.5vw, 2.2rem);
+  }
+
+  /* Hero adjustments */
+  .hero-section {
+    padding-top: calc(var(--header-height) + 16px);
+    padding-bottom: 40px;
+    min-height: auto;
+  }
+
+  .status-pill {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: clamp(1.85rem, 7.5vw, 2.4rem);
+    line-height: 1.18;
+    overflow-wrap: break-word;
+  }
+
+  .hero-description {
+    font-size: 0.96rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .hero-visual-card {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  /* Keep floating badges from causing horizontal overflow */
+  .float-badge {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .float-badge-top {
+    top: -8px;
+    right: 4px;
+  }
+
+  .float-badge-bottom {
+    bottom: -8px;
+    left: 4px;
+  }
+
+  /* Search & Filter Bar */
+  .search-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .search-box {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .filter-pills {
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .filter-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-pill {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 8px 14px;
+    font-size: 0.813rem;
+  }
+
+  /* Project Cards */
+  .project-thumbnail {
+    height: 190px;
+  }
+
+  .project-content {
+    padding: 18px 16px;
+  }
+
+  .project-title {
+    font-size: 1.25rem;
+  }
+
+  /* Modals on Mobile */
+  .modal-backdrop {
+    padding: 8px;
+  }
+
+  .modal-dialog {
+    max-height: 94vh;
+    border-radius: var(--radius-md);
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .modal-body {
+    padding: 16px 14px;
+  }
+
+  .modal-footer-actions,
+  .profile-modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-footer-actions .btn-primary,
+  .modal-footer-actions .btn-secondary,
+  .profile-modal-actions button {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .profile-modal-actions-right {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Two-column grids inside modal bodies collapse to 1 column */
+  .form-grid-2,
+  .modal-body form > div[style*="grid-template-columns: 1fr 1fr"],
+  .modal-body div[style*="grid-template-columns: 1.1fr 0.9fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Timeline */
+  .timeline-container {
+    padding-left: 24px;
+  }
+
+  .timeline-container::before {
+    left: 4px;
+  }
+
+  .timeline-dot {
+    left: -24px;
+    width: 13px;
+    height: 13px;
+  }
+
+  .timeline-card {
+    padding: 18px 14px;
+  }
+
+  .timeline-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  /* Footer */
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .footer-links {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+}
+
+/* Compact Mobile Devices (<= 480px) */
+@media (max-width: 480px) {
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .hero-actions .btn-primary,
+  .hero-actions .btn-secondary,
+  .hero-actions .profile-edit-btn-inline {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  .hero-metrics {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding-top: 18px;
+  }
+
+  .metric-item .metric-val {
+    font-size: 1.35rem;
+  }
+
+  .metric-item .metric-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.01em;
+  }
+
+  .project-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-card-action {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .toast-container {
+    width: calc(100% - 24px);
+    max-width: 360px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 14px;
+  }
+
+  .toast {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.82rem;
+    padding: 10px 14px;
+  }
+}
+
+/* Ultra-Compact Screens (<= 360px) */
+@media (max-width: 360px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .float-badge {
+    display: none;
+  }
+
+  .hero-metrics {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 10px;
   }
 }
 

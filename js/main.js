@@ -172,14 +172,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 3. Mobile Menu Drawer
   if (menuToggleBtn && mobileNavDrawer) {
-    menuToggleBtn.addEventListener('click', () => {
+    menuToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       mobileNavDrawer.classList.toggle('open');
     });
 
-    mobileNavDrawer.querySelectorAll('a').forEach(link => {
+    mobileNavDrawer.querySelectorAll('a, button').forEach(link => {
       link.addEventListener('click', () => {
         mobileNavDrawer.classList.remove('open');
       });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (mobileNavDrawer.classList.contains('open') && !mobileNavDrawer.contains(e.target) && e.target !== menuToggleBtn) {
+        mobileNavDrawer.classList.remove('open');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileNavDrawer.classList.contains('open')) {
+        mobileNavDrawer.classList.remove('open');
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768 && mobileNavDrawer.classList.contains('open')) {
+        mobileNavDrawer.classList.remove('open');
+      }
     });
   }
 
