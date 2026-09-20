@@ -341,6 +341,254 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // 7. Add Project Modal Dialog Logic & File Upload / GitHub Import
+  let uploadedImageData = '';
+
+  const newProjectFile = document.getElementById('new-project-file');
+  const dropzoneArea = document.getElementById('dropzone-area');
+  const imagePreviewContainer = document.getElementById('image-preview-container');
+  const imagePreviewImg = document.getElementById('image-preview-img');
+  const imagePreviewName = document.getElementById('image-preview-name');
+  const removeImageBtn = document.getElementById('remove-image-btn');
+  const fileUploadLabel = document.getElementById('file-upload-label');
+
+  // Handle Image File Upload (via input or drag-and-drop)
+  function processUploadedFile(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      showToast('Please select a valid image file (PNG, JPG, WebP)');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // Optimize/resize image with Canvas to save localStorage quota
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 1000;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        uploadedImageData = canvas.toDataURL('image/jpeg', 0.85);
+
+        if (imagePreviewContainer && imagePreviewImg) {
+          imagePreviewImg.src = uploadedImageData;
+          imagePreviewContainer.style.display = 'flex';
+          if (imagePreviewName) imagePreviewName.textContent = file.name;
+          if (fileUploadLabel) fileUploadLabel.textContent = `✓ ${file.name}`;
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  if (newProjectFile) {
+    newProjectFile.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        processUploadedFile(e.target.files[0]);
+      }
+    });
+  }
+
+  if (dropzoneArea) {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzoneArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzoneArea.style.borderColor = 'var(--accent-primary)';
+        dropzoneArea.style.background = 'var(--bg-surface)';
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzoneArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzoneArea.style.borderColor = 'var(--border-active)';
+        dropzoneArea.style.background = 'var(--bg-surface-elevated)';
+      });
+    });
+
+    dropzoneArea.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processUploadedFile(e.dataTransfer.files[0]);
+      }
+    });
+  }
+
+  if (removeImageBtn) {
+    removeImageBtn.addEventListener('click', () => {
+      uploadedImageData = '';
+      if (newProjectFile) newProjectFile.value = '';
+      if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+      if (fileUploadLabel) fileUploadLabel.textContent = '📁 Upload Image File';
+    });
+  }
+
+  // GitHub Auto-Import Elements
+  const githubRepoInput = document.getElementById('github-repo-input');
+  const fetchGithubBtn = document.getElementById('fetch-github-btn');
+  const githubImportStatus = document.getElementById('github-import-status');
+  const loadMyReposBtn = document.getElementById('load-my-repos-btn');
+  const githubRepoSelectContainer = document.getElementById('github-repo-select-container');
+  const githubRepoSelect = document.getElementById('github-repo-select');
+
+  async function fetchGitHubRepo(identifier) {
+    if (!identifier || !identifier.trim()) {
+      showToast('Please enter a GitHub repository name or URL');
+      return;
+    }
+
+    let clean = identifier.trim()
+      .replace(/^https?:\/\/github\.com\//i, '')
+      .replace(/\.git$/i, '')
+      .replace(/\/$/, '');
+
+    if (!clean.includes('/')) {
+      clean = `Ayoola1o/${clean}`;
+    }
+
+    if (githubImportStatus) {
+      githubImportStatus.textContent = `Fetching https://api.github.com/repos/${clean}...`;
+      githubImportStatus.style.color = 'var(--accent-cyan)';
+    }
+
+    try {
+      const res = await fetch(`https://api.github.com/repos/${clean}`);
+      if (!res.ok) {
+        throw new Error(`GitHub repo "${clean}" not found (${res.status})`);
+      }
+      const data = await res.json();
+
+      // Populate form fields
+      const titleInput = document.getElementById('new-project-title');
+      const taglineInput = document.getElementById('new-project-tagline');
+      const summaryInput = document.getElementById('new-project-summary');
+      const githubInput = document.getElementById('new-project-github');
+      const liveInput = document.getElementById('new-project-live');
+      const techInput = document.getElementById('new-project-tech');
+      const yearInput = document.getElementById('new-project-year');
+      const categorySelect = document.getElementById('new-project-category');
+      const highlightsInput = document.getElementById('new-project-highlights');
+
+      if (titleInput) {
+        titleInput.value = data.name.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      }
+      if (taglineInput) {
+        taglineInput.value = data.description || `${data.name} application and software system.`;
+      }
+      if (summaryInput) {
+        summaryInput.value = data.description || `Production repository built with ${data.language || 'modern technologies'}.`;
+      }
+      if (githubInput) {
+        githubInput.value = data.html_url;
+      }
+      if (liveInput && data.homepage) {
+        liveInput.value = data.homepage;
+      }
+      if (yearInput && data.created_at) {
+        yearInput.value = new Date(data.created_at).getFullYear();
+      }
+
+      // Tech stack from primary language + topics
+      let stack = [];
+      if (data.language) stack.push(data.language);
+      if (data.topics && Array.isArray(data.topics)) {
+        stack.push(...data.topics.map(t => t.charAt(0).toUpperCase() + t.slice(1)));
+      }
+      if (stack.length === 0) stack = ["TypeScript", "Next.js", "WebSockets"];
+      if (techInput) techInput.value = stack.slice(0, 6).join(', ');
+
+      // Intelligent Category Detection
+      const combinedText = ((data.name || '') + ' ' + (data.description || '') + ' ' + (data.topics || []).join(' ')).toLowerCase();
+      if (categorySelect) {
+        if (combinedText.includes('ai') || combinedText.includes('market') || combinedText.includes('quant') || combinedText.includes('trader') || combinedText.includes('predict')) {
+          categorySelect.value = 'ai';
+        } else if (combinedText.includes('commerce') || combinedText.includes('shop') || combinedText.includes('store') || combinedText.includes('flavor')) {
+          categorySelect.value = 'ecommerce';
+        } else if (combinedText.includes('saas') || combinedText.includes('pipeline') || combinedText.includes('system') || combinedText.includes('api')) {
+          categorySelect.value = 'saas';
+        } else {
+          categorySelect.value = 'productivity';
+        }
+      }
+
+      // Highlights
+      if (highlightsInput) {
+        highlightsInput.value = [
+          `Open source codebase with ${data.stargazers_count || 0} stars and ${data.forks_count || 0} forks on GitHub`,
+          `Engineered in ${data.language || 'TypeScript'} with automated branch continuous delivery`,
+          data.homepage ? `Live production deployment available at ${data.homepage}` : `Maintained under active development on the ${data.default_branch || 'main'} branch`
+        ].join('\n');
+      }
+
+      if (githubImportStatus) {
+        githubImportStatus.textContent = `✓ Successfully imported "${data.name}" from GitHub!`;
+        githubImportStatus.style.color = 'var(--status-emerald)';
+      }
+      showToast(`✓ Imported details for ${data.name}!`);
+    } catch (err) {
+      if (githubImportStatus) {
+        githubImportStatus.textContent = `⚠️ ${err.message}`;
+        githubImportStatus.style.color = '#ef4444';
+      }
+      showToast(`Error: ${err.message}`);
+    }
+  }
+
+  if (fetchGithubBtn && githubRepoInput) {
+    fetchGithubBtn.addEventListener('click', () => {
+      fetchGitHubRepo(githubRepoInput.value);
+    });
+
+    githubRepoInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        fetchGitHubRepo(githubRepoInput.value);
+      }
+    });
+  }
+
+  // Load My Repos Dropdown
+  if (loadMyReposBtn && githubRepoSelectContainer && githubRepoSelect) {
+    loadMyReposBtn.addEventListener('click', async () => {
+      githubRepoSelectContainer.style.display = 'block';
+      githubRepoSelect.innerHTML = '<option value="">Loading Ayoola1o repositories...</option>';
+
+      try {
+        const res = await fetch('https://api.github.com/users/Ayoola1o/repos?per_page=100&sort=updated');
+        if (!res.ok) throw new Error('Could not fetch user repositories');
+        const repos = await res.json();
+
+        githubRepoSelect.innerHTML = '<option value="">-- Select a repository to auto-fill --</option>' +
+          repos.map(r => `<option value="${r.name}">${r.name} ${r.language ? `(${r.language})` : ''} ${r.description ? `— ${r.description.slice(0, 45)}...` : ''}</option>`).join('');
+
+        showToast(`Loaded ${repos.length} repositories from Ayoola1o`);
+      } catch (err) {
+        githubRepoSelect.innerHTML = '<option value="">Error loading repositories. Please type manually.</option>';
+        showToast('Error loading GitHub repositories');
+      }
+    });
+
+    githubRepoSelect.addEventListener('change', (e) => {
+      if (e.target.value) {
+        if (githubRepoInput) githubRepoInput.value = e.target.value;
+        fetchGitHubRepo(e.target.value);
+      }
+    });
+  }
+
   function getProjectFromForm() {
     const title = document.getElementById('new-project-title').value.trim();
     const category = document.getElementById('new-project-category').value;
@@ -350,9 +598,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const liveUrl = document.getElementById('new-project-live').value.trim() || '#';
     const githubUrl = document.getElementById('new-project-github').value.trim() || '#';
     const techRaw = document.getElementById('new-project-tech').value.trim();
-    const image = document.getElementById('new-project-image').value.trim() || 'assets/images/project-saas.jpg';
+    const urlImage = document.getElementById('new-project-image').value.trim();
     const summary = document.getElementById('new-project-summary').value.trim();
     const highlightsRaw = document.getElementById('new-project-highlights').value.trim();
+
+    // Use uploaded image file data first, then URL, then fallback template
+    const finalImage = uploadedImageData || urlImage || 'assets/images/project-saas.jpg';
 
     const techStack = techRaw.split(',').map(s => s.trim()).filter(Boolean);
     const highlights = highlightsRaw ? highlightsRaw.split('\n').map(s => s.trim()).filter(Boolean) : [summary];
@@ -381,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
       categoryName: categoryNames[category] || 'Web App',
       status,
       statusColor: statusColors[status] || 'emerald',
-      image,
+      image: finalImage,
       featured: true,
       year,
       summary,
@@ -389,14 +640,14 @@ document.addEventListener('DOMContentLoaded', () => {
       highlights,
       techStack,
       metrics: [
-        { label: "Deployment", value: "Live" },
+        { label: "Deployment", value: liveUrl !== '#' ? "Live URL" : "Repository" },
         { label: "Status", value: status },
         { label: "Year", value: year },
         { label: "Stack", value: techStack[0] || 'Full-Stack' }
       ],
       liveUrl,
       githubUrl,
-      architecture: `Full-stack web application utilizing ${techStack.join(', ')}.`,
+      architecture: `Full-stack application built with ${techStack.join(', ')}.`,
       isCustom: true
     };
   }
@@ -412,6 +663,9 @@ document.addEventListener('DOMContentLoaded', () => {
       renderProjects();
       closeAddModal();
       addProjectForm.reset();
+      uploadedImageData = '';
+      if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+      if (fileUploadLabel) fileUploadLabel.textContent = '📁 Upload Image File';
       showToast(`🎉 "${newProj.title}" added to your live portfolio!`);
     });
   }
@@ -423,9 +677,12 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Please enter at least a Project Title first.');
         return;
       }
-      // Create clean JS code without isCustom
       const cleanProj = { ...newProj };
       delete cleanProj.isCustom;
+      // If uploaded image was base64, advise on storing in assets
+      if (cleanProj.image && cleanProj.image.startsWith('data:')) {
+        cleanProj.image = 'assets/images/your-screenshot.jpg';
+      }
       const codeSnippet = '  ' + JSON.stringify(cleanProj, null, 2).replace(/\n/g, '\n  ') + ',';
       
       navigator.clipboard.writeText(codeSnippet).then(() => {
