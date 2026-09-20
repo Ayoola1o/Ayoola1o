@@ -1,170 +1,163 @@
-// Web Applications Showcase Data
+// Web Applications Showcase Data for Ayoola Adebisi (Ayoola1o)
 const portfolioProjects = [
   {
-    id: "pulsemetrics",
-    title: "PulseMetrics AI",
-    tagline: "Real-Time Enterprise SaaS Analytics & Revenue Forecasting Platform",
-    category: "saas",
-    categoryName: "SaaS & Full-Stack",
+    id: "aimarkettracker",
+    title: "AI Market Tracker",
+    tagline: "Real-Time Financial Markets Trend Prediction & Intelligence Platform",
+    category: "ai",
+    categoryName: "AI & FinTech",
     status: "Production Live",
     statusColor: "emerald",
     image: "assets/images/project-saas.jpg",
     featured: true,
     year: "2025",
-    summary: "High-throughput cloud analytics engine processing 14M+ daily telemetry events with predictive ARR/MRR forecasting and real-time customer churn alerts.",
-    description: "PulseMetrics AI was built to solve the fragmentation in B2B subscription monitoring. It ingests Stripe, Paddle, and custom webhook events through a Kafka pipeline, computes rolling retention cohorts, and renders sub-second interactive heatmaps and metrics widgets.",
+    summary: "Real-time predictive market analytics tool tracking uptrends and downtrends with high-probability forecast modeling and interactive charting.",
+    description: "AI Market Tracker was built to deliver institutional-grade market trend prediction to modern traders. It analyzes high-frequency asset movements, calculates predictive momentum indicators, and streams live buy/sell signal alerts.",
     highlights: [
-      "Sub-second aggregation queries over 50M+ rows using TimescaleDB & Redis caching",
-      "Interactive data visualization built with WebGL & Canvas for zero dropped frames",
-      "Automated predictive forecasting with 94.2% accuracy on 90-day churn",
-      "Multi-tenant workspace architecture with granular role-based access control (RBAC)"
+      "Real-time predictive trend detection algorithms analyzing price action and market momentum",
+      "Sub-second live market charts with automated support and resistance detection",
+      "Deployed to Vercel edge runtime with optimal responsiveness across mobile and desktop",
+      "High-throughput WebSocket data ingestion for continuous market streaming"
     ],
-    techStack: ["Next.js 14", "TypeScript", "Node.js", "TimescaleDB", "Redis", "Tailwind CSS", "Docker"],
+    techStack: ["TypeScript", "Next.js", "React", "Vercel", "WebSockets", "Tailwind CSS"],
     metrics: [
-      { label: "Active Organizations", value: "240+" },
-      { label: "Daily Ingested Events", value: "14M+" },
-      { label: "Query P95 Latency", value: "85ms" },
-      { label: "Uptime SLA", value: "99.98%" }
+      { label: "Deployment", value: "Vercel Live" },
+      { label: "Feed Latency", value: "<120ms" },
+      { label: "Prediction Model", value: "Real-Time" },
+      { label: "Status", value: "Online" }
     ],
-    liveUrl: "https://pulsemetrics-demo.example.com",
-    githubUrl: "https://github.com/example/pulsemetrics-ai",
-    architecture: "Event-driven microservices: Next.js frontend deployed on Vercel edge nodes, Go webhook ingestion gateway, TimescaleDB for time-series persistence, and Redis pub/sub for real-time WebSocket feeds."
+    liveUrl: "https://aimarkettracker.vercel.app",
+    githubUrl: "https://github.com/Ayoola1o/Aimarkettracker",
+    architecture: "Next.js & TypeScript front-end deployed on Vercel edge infrastructure, streaming market signals via secure WebSockets with reactive client-side state caching."
   },
   {
-    id: "neuralforge",
-    title: "NeuralForge Studio",
-    tagline: "Visual Multi-Agent Prompt Orchestration & LLM Pipeline IDE",
+    id: "aiquant",
+    title: "AI Quant Engine",
+    tagline: "High-Performance Quantitative Finance & Algorithmic Strategy System",
     category: "ai",
-    categoryName: "AI & ML Systems",
-    status: "Active Beta",
+    categoryName: "AI & FinTech",
+    status: "Active System",
     statusColor: "violet",
     image: "assets/images/project-ai.jpg",
     featured: true,
-    year: "2025",
-    summary: "Visual canvas environment allowing engineering teams to design, benchmark, and deploy multi-model AI agent workflows with zero boilerplate.",
-    description: "NeuralForge Studio eliminates brittle Python glue code for complex prompt chaining. Developers visually connect embeddings, vector stores, prompt nodes, and LLM reasoning steps with real-time token telemetry and side-by-side model benchmarking.",
+    year: "2026",
+    summary: "Comprehensive quantitative finance framework executing automated statistical arbitrage, portfolio risk modeling, and backtesting pipelines.",
+    description: "Built for systematic algorithmic trading and asset management. AI Quant runs high-dimensional mathematical simulations, multi-asset portfolio optimization, and Sharpe ratio maximization across historical tick datasets.",
     highlights: [
-      "Custom node-graph editor supporting dynamic execution loops and conditional branching",
-      "Unified adapter layer supporting OpenAI, Anthropic, Gemini, and local Ollama models",
-      "Streaming token diffing with interactive temperature and Top-P live preview sliders",
-      "Automated evaluation suites measuring hallucination rates, latency, and token cost"
+      "Vectorized strategy backtesting engine processing multi-gigabyte financial datasets",
+      "Monte Carlo risk simulations, Value at Risk (VaR), and maximum drawdown mitigation",
+      "Modular alpha model architecture for algorithmic signal extraction and ranking",
+      "Automated position sizing and risk-budget allocation algorithms"
     ],
-    techStack: ["React 19", "FastAPI", "Python", "Qdrant Vector DB", "WebSockets", "CSS Modules"],
+    techStack: ["Python", "FastAPI", "NumPy", "Pandas", "Scikit-Learn", "Docker", "Git"],
     metrics: [
-      { label: "Pipeline Executions", value: "1.2M+" },
-      { label: "Avg Token Savings", value: "32%" },
-      { label: "Supported Models", value: "18+" },
-      { label: "GitHub Stars", value: "2.4k" }
+      { label: "Language", value: "Python" },
+      { label: "Repository Size", value: "20MB+" },
+      { label: "Backtest Speed", value: "10x Vector" },
+      { label: "Risk Models", value: "Multi-Asset" }
     ],
-    liveUrl: "https://neuralforge.example.com",
-    githubUrl: "https://github.com/example/neuralforge-studio",
-    architecture: "React Flow front-end connected via WebSockets to an asynchronous Python FastAPI runtime. Workflows execute asynchronously in Celery workers with vector semantic cache layers."
+    liveUrl: "https://github.com/Ayoola1o/Aiquant",
+    githubUrl: "https://github.com/Ayoola1o/Aiquant",
+    architecture: "Event-driven asynchronous Python runtime with vectorized calculations in NumPy/Pandas, decoupled strategy execution modules, and containerized Docker environments."
   },
   {
-    id: "agileflow",
-    title: "AgileFlow Collaborative",
-    tagline: "Ultra-Fast Real-Time Kanban & Sprint Execution Workspace",
-    category: "productivity",
-    categoryName: "Productivity & Tools",
-    status: "Production Live",
-    statusColor: "amber",
+    id: "aitrader",
+    title: "AI Trader System",
+    tagline: "Autonomous Algorithmic Trading Execution Engine & Signal Pipeline",
+    category: "saas",
+    categoryName: "SaaS & Systems",
+    status: "Production Ready",
+    statusColor: "emerald",
     image: "assets/images/project-devflow.jpg",
     featured: true,
-    year: "2024",
-    summary: "Frictionless agile project management web app with multiplayer cursor presence, optimistic updates, and bidirectional GitHub/GitLab issue synchronization.",
-    description: "Designed for high-velocity software engineering teams that find Jira sluggish. AgileFlow provides a 60fps keyboard-driven kanban board that syncs across teammates in under 30 milliseconds using conflict-free replicated data types (CRDTs).",
+    year: "2026",
+    summary: "Automated trading execution pipeline connecting algorithmic prediction signals directly to market order books with sub-second precision.",
+    description: "AI Trader bridges strategy modeling and live market order routing. It handles position management, stop-loss / take-profit automation, API gateway authentication, and webhook event processing with strict risk guardrails.",
     highlights: [
-      "Zero-latency drag-and-drop powered by HTML5 Drag API and optimistic state trees",
-      "Multiplayer live collaboration with shared presence, avatars, and live typing indicators",
-      "Bi-directional webhook sync with GitHub Issues, PRs, and commit references",
-      "Complete offline-first support via IndexedDB with automatic background conflict reconciliation"
+      "Automated order placement, limit laddering, and dynamic trailing stop execution",
+      "Integrated exchange API connectors with failover redundancy and rate-limit buffering",
+      "Real-time logging, P&L reporting, and instant webhook alert dispatch",
+      "Built-in circuit breakers to protect capital against sudden volatility spikes"
     ],
-    techStack: ["Vue.js 3", "Node.js", "WebSockets", "PostgreSQL", "IndexedDB", "Tailwind CSS"],
+    techStack: ["Python", "REST APIs", "WebSockets", "TimescaleDB", "Docker", "Linux"],
     metrics: [
-      { label: "Sync Latency", value: "<30ms" },
-      { label: "Daily Active Users", value: "18.5k" },
-      { label: "Tasks Completed", value: "890k+" },
-      { label: "Customer CSAT", value: "4.9/5" }
+      { label: "Execution Latency", value: "<50ms" },
+      { label: "Codebase", value: "44k+ Lines" },
+      { label: "Risk Circuit", value: "Active" },
+      { label: "Automation", value: "24/7" }
     ],
-    liveUrl: "https://agileflow.example.com",
-    githubUrl: "https://github.com/example/agileflow-collaborative",
-    architecture: "Optimistic UI state with Yjs CRDTs over secure WebSockets. Distributed Node.js backend using Redis cluster for horizontal room routing and PostgreSQL for persistent snapshots."
+    liveUrl: "https://github.com/Ayoola1o/Aitrader",
+    githubUrl: "https://github.com/Ayoola1o/Aitrader",
+    architecture: "Asynchronous worker queue monitoring live market streams, executing order management logic through exchange gateways with persistent audit logging in PostgreSQL."
   },
   {
-    id: "velour",
-    title: "Velour Luxury Commerce",
-    tagline: "Headless Luxury E-Commerce with Sub-100ms Instant Checkout",
+    id: "marketai",
+    title: "MarketAI / 9jaFlavor",
+    tagline: "Full-Fledged Modern Web Application & Digital Commerce Portal",
     category: "ecommerce",
-    categoryName: "E-Commerce",
+    categoryName: "E-Commerce & Web",
     status: "Production Live",
     statusColor: "cyan",
     image: "assets/images/project-ecommerce.jpg",
     featured: true,
-    year: "2024",
-    summary: "Architected a luxury timepiece e-commerce flagship featuring dynamic product 3D config, micro-animations, and integrated Stripe 1-Click payment flows.",
-    description: "Velour pairs high-end editorial aesthetics with extreme performance engineering. Built on a headless architecture, it achieves 100/100 Google Lighthouse audit scores while rendering high-res interactive product showcases and instant cart slides.",
+    year: "2025",
+    summary: "Comprehensive digital marketplace web platform featuring catalog discovery, real-time cart state, and responsive checkout experiences.",
+    description: "A full-scale commercial web application offering fast product browsing, secure session persistence, fluid mobile-first layouts, and integrated payment gateway flows.",
     highlights: [
-      "100/100 Lighthouse Performance, Accessibility, and Best Practices scores",
-      "Edge-rendered dynamic inventory counters with global CDN geolocation pricing",
-      "One-click frictionless checkout integrating Apple Pay, Google Pay, and Stripe Elements",
-      "Fluid glassmorphic cart drawer with persistent guest-to-account migration"
+      "100% responsive fluid interface optimized for mobile shopping and fast checkout",
+      "Interactive cart drawer and dynamic order calculation with live tax and shipping",
+      "Production deployment on Vercel edge network with continuous deployment",
+      "Structured product schema for high SEO discoverability"
     ],
-    techStack: ["Next.js", "TypeScript", "Shopify Storefront API", "Stripe SDK", "CSS3 Glass"],
+    techStack: ["React", "JavaScript", "Vercel", "REST APIs", "Modern CSS3"],
     metrics: [
-      { label: "Lighthouse Score", value: "100/100" },
-      { label: "Conversion Lift", value: "+38%" },
-      { label: "First Contentful Paint", value: "0.4s" },
-      { label: "Mobile Traffic", value: "72%" }
+      { label: "Deployment", value: "Vercel Live" },
+      { label: "Performance", value: "98/100" },
+      { label: "Platform", value: "Web App" },
+      { label: "Uptime", value: "99.9%" }
     ],
-    liveUrl: "https://velour-luxury.example.com",
-    githubUrl: "https://github.com/example/velour-headless-store",
-    architecture: "Static Site Generation (SSG) with Incremental Static Regeneration (ISR) on Cloudflare Edge. Cart state handled via local state synced to Shopify Storefront GraphQL endpoints."
+    liveUrl: "https://marketai-smoky.vercel.app",
+    githubUrl: "https://github.com/Ayoola1o/9jaflavor",
+    architecture: "Single Page Application (SPA) architecture deployed on Vercel with modern reactive client state management and modular REST endpoints."
   }
 ];
 
 // Technical Capabilities Matrix
 const technicalSkills = [
   {
-    category: "Frontend Engineering",
+    category: "Full-Stack Web Engineering",
     icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>`,
-    description: "Building responsive, accessible, high-framerate web applications with modern frameworks.",
-    skills: ["React 19 / Next.js", "TypeScript", "Vue.js 3", "Modern CSS & Flex/Grid", "Zustand & Redux", "WebSockets / Realtime", "Performance Optimization"]
+    description: "Building responsive, accessible, high-framerate web applications and interactive UIs.",
+    skills: ["TypeScript / JavaScript", "React / Next.js", "Modern HTML5 & CSS3", "Responsive Architecture", "State Management", "WebSockets / Realtime", "Performance Tuning"]
   },
   {
-    category: "Backend & Distributed Systems",
+    category: "Backend & Systems Architecture",
     icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>`,
-    description: "Designing scalable REST, GraphQL, and event-driven APIs with robust security and throughput.",
-    skills: ["Node.js / Express", "Python (FastAPI)", "Go (Golang)", "PostgreSQL / TimescaleDB", "Redis Caching", "Kafka Event Pipelines", "JWT / OAuth2 / RBAC"]
+    description: "Designing scalable APIs, low-latency data pipelines, and quantitative trading systems.",
+    skills: ["Python (FastAPI, Flask)", "Node.js", "C / Low-Level Programming", "PostgreSQL / TimescaleDB", "RESTful & WebSocket APIs", "Distributed Queues", "Auth & RBAC"]
   },
   {
-    category: "AI & Cloud Infrastructure",
-    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="M2 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="M12 22-v-4"/><path d="m19.07 19.07-2.83-2.83"/><path d="M22 12h-4"/><path d="m19.07 4.93-2.83 2.83"/></svg>`,
-    description: "Integrating modern LLMs, vector search, continuous deployment, and containerized cloud setups.",
-    skills: ["LLM Chaining & RAG", "Vector DBs (Qdrant/Pinecone)", "Docker & Containers", "CI/CD (GitHub Actions)", "Vercel / Cloudflare / AWS", "Git & Code Quality"]
+    category: "AI, FinTech & DevOps",
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="M2 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="M12 22v-4"/><path d="m19.07 19.07-2.83-2.83"/><path d="M22 12h-4"/><path d="m19.07 4.93-2.83 2.83"/></svg>`,
+    description: "Predictive machine learning models, quantitative finance, cloud deployment, and CI/CD.",
+    skills: ["Machine Learning & Scikit-Learn", "Quantitative Analysis", "Docker Containerization", "Vercel / Cloud Edge", "CI/CD & GitHub Actions", "System Engineering & DevOps", "Git Workflow"]
   }
 ];
 
 // Experience / Milestone Timeline
 const careerJourney = [
   {
-    period: "2023 — Present",
-    role: "Senior Full-Stack & Systems Engineer",
-    organization: "Independent Software Studio / Contract",
-    description: "Lead end-to-end development of customer-facing web applications, enterprise SaaS platforms, and AI-driven workflow engines. Shipped 4 major production applications serving 70k+ monthly active users.",
-    badges: ["Full-Stack Architecture", "System Design", "Cloud Infrastructure", "Client Delivery"]
+    period: "2024 — Present",
+    role: "Full-Stack Engineer & AI Systems Developer",
+    organization: "Independent Software & FinTech Development",
+    description: "Architected and shipped production web applications including AI Market Tracker, AI Quant algorithmic trading frameworks, and cloud-hosted platforms serving active users.",
+    badges: ["AI / ML", "Full-Stack Web", "Quantitative Systems", "TypeScript / Python"]
   },
   {
-    period: "2021 — 2023",
-    role: "Full-Stack Web Developer",
-    organization: "Nexus Tech Solutions",
-    description: "Spearheaded frontend rebuild of core telemetry dashboard into Next.js, reducing bundle size by 44% and lowering average page load latency under 1 second.",
-    badges: ["Next.js", "TypeScript", "PostgreSQL", "REST APIs", "Micro-frontends"]
-  },
-  {
-    period: "2019 — 2021",
-    role: "Frontend Software Engineer",
-    organization: "Hyperion Digital",
-    description: "Designed responsive user interfaces, design systems, and state architectures for high-traffic client web applications. Mentored junior developers in accessibility and automated testing.",
-    badges: ["React", "JavaScript ES6+", "UI/UX Design", "Performance Auditing"]
+    period: "2022 — 2024",
+    role: "Full-Stack Software Engineering & DevOps",
+    organization: "ALX Software Engineering Program",
+    description: "Mastered low-level systems engineering in C, backend microservices, Linux systems administration, DevOps automation, and scalable web architectures.",
+    badges: ["C Programming", "Linux / Bash", "DevOps & CI/CD", "Web Architecture"]
   }
 ];
