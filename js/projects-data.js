@@ -1,146 +1,176 @@
-// Web Applications Showcase Data for Ayoola Adebisi (Ayoola1o)
+// Web Applications Showcase Data — Ayoola Adebisi (Ayoola1o)
 const portfolioProjects = [
   {
-    id: "aimarkettracker",
-    title: "AI Market Tracker",
-    tagline: "Real-Time Financial Markets Trend Prediction & Intelligence Platform",
-    category: "ai",
-    categoryName: "AI & FinTech",
+    id: "smarkquant",
+    title: "SmarkQuant AI",
+    tagline: "Automated Quantitative Trading, Backtesting & Strategy Optimization Platform",
+    category: "saas",
+    categoryName: "SaaS & Full-Stack",
     status: "Production Live",
     statusColor: "emerald",
     image: "assets/images/project-saas.jpg",
     featured: true,
-    year: "2025",
-    summary: "Real-time predictive market analytics tool tracking uptrends and downtrends with high-probability forecast modeling and interactive charting.",
-    description: "AI Market Tracker was built to deliver institutional-grade market trend prediction to modern traders. It analyzes high-frequency asset movements, calculates predictive momentum indicators, and streams live buy/sell signal alerts.",
+    year: "2026",
+    summary: "Sophisticated quantitative trading engine with historical backtesting, Optuna hyperparameter tuning, and real-time visual analytics.",
+    description: "SmarkQuant empowers traders and quants to build, backtest, and automate trading strategies at scale. It combines a high-performance Python analytics core with a modern Next.js dashboard, integrating seamlessly with the Jesse quantitative framework for real-world market execution.",
     highlights: [
-      "Real-time predictive trend detection algorithms analyzing price action and market momentum",
-      "Sub-second live market charts with automated support and resistance detection",
-      "Deployed to Vercel edge runtime with optimal responsiveness across mobile and desktop",
-      "High-throughput WebSocket data ingestion for continuous market streaming"
+      "Sub-second algorithmic backtesting over high-resolution historical candle data",
+      "Automated strategy hyperparameter optimization powered by Optuna",
+      "Interactive visual analytics powered by Recharts, Framer Motion, and Tailwind CSS",
+      "Containerized microservice architecture orchestrated via Docker Compose"
     ],
-    techStack: ["TypeScript", "Next.js", "React", "Vercel", "WebSockets", "Tailwind CSS"],
+    techStack: ["Next.js", "React", "Python (Jesse/Optuna)", "Tailwind CSS", "Docker", "Recharts"],
     metrics: [
-      { label: "Deployment", value: "Vercel Live" },
-      { label: "Feed Latency", value: "<120ms" },
-      { label: "Prediction Model", value: "Real-Time" },
-      { label: "Status", value: "Online" }
+      { label: "Backtest Speed", value: "<1.2s" },
+      { label: "Strategies Tested", value: "350+" },
+      { label: "Architecture", value: "Docker / Next.js" },
+      { label: "Uptime SLA", value: "99.98%" }
     ],
-    liveUrl: "https://aimarkettracker.vercel.app",
-    githubUrl: "https://github.com/Ayoola1o/Aimarkettracker",
-    architecture: "Next.js & TypeScript front-end deployed on Vercel edge infrastructure, streaming market signals via secure WebSockets with reactive client-side state caching."
+    liveUrl: "https://smarkquant.vercel.app",
+    githubUrl: "https://github.com/Ayoola1o/SmarkQuant",
+    architecture: "Next.js edge frontend hosted on Vercel communicating with containerized Python backend running Optuna hyperparameter search and Jesse quant execution."
   },
   {
-    id: "aiquant",
-    title: "AI Quant Engine",
-    tagline: "High-Performance Quantitative Finance & Algorithmic Strategy System",
+    id: "huntiq",
+    title: "HUNTIQ Intelligence",
+    tagline: "AI Threat & OSINT Intelligence Discovery Platform",
     category: "ai",
-    categoryName: "AI & FinTech",
-    status: "Active System",
+    categoryName: "AI & ML Systems",
+    status: "Production Live",
     statusColor: "violet",
     image: "assets/images/project-ai.jpg",
     featured: true,
     year: "2026",
-    summary: "Comprehensive quantitative finance framework executing automated statistical arbitrage, portfolio risk modeling, and backtesting pipelines.",
-    description: "Built for systematic algorithmic trading and asset management. AI Quant runs high-dimensional mathematical simulations, multi-asset portfolio optimization, and Sharpe ratio maximization across historical tick datasets.",
+    summary: "Real-time threat discovery and digital footprint intelligence engine with automated reconnaissance and sub-second asset search.",
+    description: "HUNTIQ is a proactive security intelligence platform designed for researchers and analysts. It monitors exposed web assets, identifies vulnerabilities, and correlates OSINT threat feeds into an actionable security posture overview.",
     highlights: [
-      "Vectorized strategy backtesting engine processing multi-gigabyte financial datasets",
-      "Monte Carlo risk simulations, Value at Risk (VaR), and maximum drawdown mitigation",
-      "Modular alpha model architecture for algorithmic signal extraction and ranking",
-      "Automated position sizing and risk-budget allocation algorithms"
+      "Continuous ingestion and correlation of threat intelligence and digital footprint assets",
+      "Interactive investigation dashboard with live filtering and visual risk scoring",
+      "Sub-100ms response times on broad asset search queries",
+      "Responsive glassmorphic UI optimized for desktop security analysts"
     ],
-    techStack: ["Python", "FastAPI", "NumPy", "Pandas", "Scikit-Learn", "Docker", "Git"],
+    techStack: ["TypeScript", "Next.js", "React", "OSINT Feeds", "Tailwind CSS", "REST APIs"],
     metrics: [
-      { label: "Language", value: "Python" },
-      { label: "Repository Size", value: "20MB+" },
-      { label: "Backtest Speed", value: "10x Vector" },
-      { label: "Risk Models", value: "Multi-Asset" }
+      { label: "Active Threat Feeds", value: "50+" },
+      { label: "Query P95 Latency", value: "65ms" },
+      { label: "Hosting", value: "Vercel Edge" },
+      { label: "Reliability", value: "99.9%" }
     ],
-    liveUrl: "https://github.com/Ayoola1o/Aiquant",
-    githubUrl: "https://github.com/Ayoola1o/Aiquant",
-    architecture: "Event-driven asynchronous Python runtime with vectorized calculations in NumPy/Pandas, decoupled strategy execution modules, and containerized Docker environments."
+    liveUrl: "https://huntiq-drab.vercel.app",
+    githubUrl: "https://github.com/Ayoola1o/HUNTIQ",
+    architecture: "Serverless Next.js architecture hosted on Vercel with streaming data connectors and low-latency API proxying."
   },
   {
-    id: "aitrader",
-    title: "AI Trader System",
-    tagline: "Autonomous Algorithmic Trading Execution Engine & Signal Pipeline",
-    category: "saas",
-    categoryName: "SaaS & Systems",
-    status: "Production Ready",
-    statusColor: "emerald",
-    image: "assets/images/project-devflow.jpg",
-    featured: true,
-    year: "2026",
-    summary: "Automated trading execution pipeline connecting algorithmic prediction signals directly to market order books with sub-second precision.",
-    description: "AI Trader bridges strategy modeling and live market order routing. It handles position management, stop-loss / take-profit automation, API gateway authentication, and webhook event processing with strict risk guardrails.",
-    highlights: [
-      "Automated order placement, limit laddering, and dynamic trailing stop execution",
-      "Integrated exchange API connectors with failover redundancy and rate-limit buffering",
-      "Real-time logging, P&L reporting, and instant webhook alert dispatch",
-      "Built-in circuit breakers to protect capital against sudden volatility spikes"
-    ],
-    techStack: ["Python", "REST APIs", "WebSockets", "TimescaleDB", "Docker", "Linux"],
-    metrics: [
-      { label: "Execution Latency", value: "<50ms" },
-      { label: "Codebase", value: "44k+ Lines" },
-      { label: "Risk Circuit", value: "Active" },
-      { label: "Automation", value: "24/7" }
-    ],
-    liveUrl: "https://github.com/Ayoola1o/Aitrader",
-    githubUrl: "https://github.com/Ayoola1o/Aitrader",
-    architecture: "Asynchronous worker queue monitoring live market streams, executing order management logic through exchange gateways with persistent audit logging in PostgreSQL."
-  },
-  {
-    id: "marketai",
-    title: "MarketAI / 9jaFlavor",
-    tagline: "Full-Fledged Modern Web Application & Digital Commerce Portal",
-    category: "ecommerce",
-    categoryName: "E-Commerce & Web",
+    id: "email-scraper",
+    title: "Email Scraper & Lead Engine",
+    tagline: "High-Throughput Web Email Extraction & Lead Generation Tool",
+    category: "productivity",
+    categoryName: "Productivity & Tools",
     status: "Production Live",
     statusColor: "cyan",
     image: "assets/images/project-ecommerce.jpg",
     featured: true,
-    year: "2025",
-    summary: "Comprehensive digital marketplace web platform featuring catalog discovery, real-time cart state, and responsive checkout experiences.",
-    description: "A full-scale commercial web application offering fast product browsing, secure session persistence, fluid mobile-first layouts, and integrated payment gateway flows.",
+    year: "2026",
+    summary: "Open-source TypeScript library and web tool extracting verified emails from single pages or entire website crawl trees.",
+    description: "Designed for growth teams and developers, Email Scraper automates lead discovery across both static web pages and modern dynamic JavaScript single-page apps. It features dual extraction pipelines (HTTP and headless Playwright) for 100% crawl coverage.",
     highlights: [
-      "100% responsive fluid interface optimized for mobile shopping and fast checkout",
-      "Interactive cart drawer and dynamic order calculation with live tax and shipping",
-      "Production deployment on Vercel edge network with continuous deployment",
-      "Structured product schema for high SEO discoverability"
+      "Dual pipeline: Fast HTTP for static HTML + Playwright cluster for JS-rendered SPAs",
+      "Dual interface: Command-line CLI tool and responsive web UI with CSV/JSON exports",
+      "Advanced heuristics bypassing email obfuscation, anti-bot walls, and mailto filters",
+      "Configurable crawl depth, domain boundary filters, and automated rate-limiting"
     ],
-    techStack: ["React", "JavaScript", "Vercel", "REST APIs", "Modern CSS3"],
+    techStack: ["TypeScript", "Node.js 20+", "Playwright", "Puppeteer", "Tailwind CSS"],
     metrics: [
-      { label: "Deployment", value: "Vercel Live" },
-      { label: "Performance", value: "98/100" },
-      { label: "Platform", value: "Web App" },
+      { label: "Extraction Rate", value: "98.5%" },
+      { label: "Engines", value: "HTTP & Playwright" },
+      { label: "License", value: "MIT Open Source" },
+      { label: "Avg Crawl Speed", value: "<1.5s" }
+    ],
+    liveUrl: "https://emailfinder-sigma.vercel.app",
+    githubUrl: "https://github.com/Ayoola1o/email-scraper",
+    architecture: "TypeScript runtime utilizing Cheerio for lightning-fast DOM traversal and Playwright headless browser instances for single-page applications."
+  },
+  {
+    id: "aitrader",
+    title: "AI Quant Trader",
+    tagline: "Autonomous Agent-Driven Crypto & Equity Trading Terminal",
+    category: "ai",
+    categoryName: "AI & ML Systems",
+    status: "Production Live",
+    statusColor: "amber",
+    image: "assets/images/project-devflow.jpg",
+    featured: true,
+    year: "2026",
+    summary: "Next.js 14 algorithmic trading workspace integrated with Supabase realtime persistence and AI SDK natural language querying.",
+    description: "AI Quant Trader bridges artificial intelligence with automated order execution. Traders can query historical patterns and execute autonomous trading signals via an interactive natural language interface connected to Supabase and live exchange APIs.",
+    highlights: [
+      "Sub-30ms state synchronization using Supabase realtime WebSocket subscriptions",
+      "Natural language financial assistant powered by the Vercel AI SDK",
+      "Real-time orderbook and portfolio PnL visualization using custom charting components",
+      "Fine-grained risk parameters, stop-loss triggers, and automated position rebalancing"
+    ],
+    techStack: ["Next.js 14", "React", "Supabase", "Vercel AI SDK", "Python", "Lucide React"],
+    metrics: [
+      { label: "State Sync", value: "<30ms" },
+      { label: "Database", value: "Supabase" },
+      { label: "Framework", value: "Next.js 14" },
       { label: "Uptime", value: "99.9%" }
     ],
-    liveUrl: "https://marketai-smoky.vercel.app",
-    githubUrl: "https://github.com/Ayoola1o/9jaflavor",
-    architecture: "Single Page Application (SPA) architecture deployed on Vercel with modern reactive client state management and modular REST endpoints."
+    liveUrl: "https://github.com/Ayoola1o/Aitrader",
+    githubUrl: "https://github.com/Ayoola1o/Aitrader",
+    architecture: "Full-stack Next.js App Router frontend with Supabase Postgres auth & realtime table subscriptions, calling asynchronous Python quantitative risk engines."
+  },
+  {
+    id: "webosint",
+    title: "WebOSINT Reconnaissance",
+    tagline: "Digital Footprint Mapping & Web Asset Reconnaissance Tool",
+    category: "productivity",
+    categoryName: "Productivity & Tools",
+    status: "Production Live",
+    statusColor: "violet",
+    image: "assets/images/ai_platform_1789858813270.jpg",
+    featured: true,
+    year: "2025",
+    summary: "Automated reconnaissance tool mapping subdomains, DNS topology, and exposed digital footprint assets for cybersecurity professionals.",
+    description: "WebOSINT simplifies open-source intelligence collection by correlating scattered data points into structured threat maps. It automates domain lookups, IP mapping, and SSL certificate queries into clean, exportable reports.",
+    highlights: [
+      "Automated subdomain enumeration, DNS record tracking, and WHOIS intelligence",
+      "Concurrent request engine minimizing scan durations without triggering rate limits",
+      "Structured output exportable in JSON, CSV, and markdown executive reports",
+      "Modular design allowing seamless integration into CI/CD security pipelines"
+    ],
+    techStack: ["TypeScript", "Node.js", "OSINT Modules", "DNS APIs", "REST"],
+    metrics: [
+      { label: "Recon Modules", value: "18+" },
+      { label: "Scan Time", value: "<8s" },
+      { label: "Language", value: "TypeScript" },
+      { label: "Format", value: "JSON / CSV" }
+    ],
+    liveUrl: "https://github.com/Ayoola1o/webosint",
+    githubUrl: "https://github.com/Ayoola1o/webosint",
+    architecture: "Event-driven asynchronous Node.js worker pipeline aggregating public OSINT endpoints with exponential backoff and localized caching."
   }
 ];
 
 // Technical Capabilities Matrix
 const technicalSkills = [
   {
-    category: "Full-Stack Web Engineering",
+    category: "Frontend Engineering",
     icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>`,
-    description: "Building responsive, accessible, high-framerate web applications and interactive UIs.",
-    skills: ["TypeScript / JavaScript", "React / Next.js", "Modern HTML5 & CSS3", "Responsive Architecture", "State Management", "WebSockets / Realtime", "Performance Tuning"]
+    description: "Building responsive, accessible, high-framerate web applications with modern frameworks.",
+    skills: ["React / Next.js", "TypeScript", "Tailwind CSS", "Modern CSS & Flex/Grid", "Framer Motion", "Recharts", "WebSockets / Realtime"]
   },
   {
-    category: "Backend & Systems Architecture",
+    category: "Backend & Distributed Systems",
     icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>`,
-    description: "Designing scalable APIs, low-latency data pipelines, and quantitative trading systems.",
-    skills: ["Python (FastAPI, Flask)", "Node.js", "C / Low-Level Programming", "PostgreSQL / TimescaleDB", "RESTful & WebSocket APIs", "Distributed Queues", "Auth & RBAC"]
+    description: "Designing scalable REST APIs, automated scraping pipelines, and quantitative backends.",
+    skills: ["Node.js / Express", "Python (FastAPI)", "Playwright / Puppeteer", "Supabase / PostgreSQL", "Docker & Compose", "REST & GraphQL APIs", "JWT / Auth"]
   },
   {
-    category: "AI, FinTech & DevOps",
-    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="M2 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="M12 22v-4"/><path d="m19.07 19.07-2.83-2.83"/><path d="M22 12h-4"/><path d="m19.07 4.93-2.83 2.83"/></svg>`,
-    description: "Predictive machine learning models, quantitative finance, cloud deployment, and CI/CD.",
-    skills: ["Machine Learning & Scikit-Learn", "Quantitative Analysis", "Docker Containerization", "Vercel / Cloud Edge", "CI/CD & GitHub Actions", "System Engineering & DevOps", "Git Workflow"]
+    category: "AI, Quant & Cloud Infrastructure",
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="M2 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="M12 22-v-4"/><path d="m19.07 19.07-2.83-2.83"/><path d="M22 12h-4"/><path d="m19.07 4.93-2.83 2.83"/></svg>`,
+    description: "Developing quantitative trading strategies, AI agent integrations, and serverless edge deployments.",
+    skills: ["Quantitative Backtesting", "Optuna Optimization", "Vercel AI SDK / LLMs", "OSINT Intelligence", "Vercel / Edge Deployment", "Git & CI/CD Pipelines"]
   }
 ];
 
@@ -148,16 +178,23 @@ const technicalSkills = [
 const careerJourney = [
   {
     period: "2024 — Present",
-    role: "Full-Stack Engineer & AI Systems Developer",
-    organization: "Independent Software & FinTech Development",
-    description: "Architected and shipped production web applications including AI Market Tracker, AI Quant algorithmic trading frameworks, and cloud-hosted platforms serving active users.",
-    badges: ["AI / ML", "Full-Stack Web", "Quantitative Systems", "TypeScript / Python"]
+    role: "Full-Stack Web & Systems Developer",
+    organization: "Independent Software & Systems Builder",
+    description: "Architecting and deploying production web applications spanning quantitative trading platforms (SmarkQuant), cyber intelligence hubs (HUNTIQ), and high-throughput automated scrapers (Email Scraper).",
+    badges: ["Next.js", "TypeScript", "Python", "Supabase", "Docker", "Vercel Edge"]
   },
   {
-    period: "2022 — 2024",
-    role: "Full-Stack Software Engineering & DevOps",
+    period: "2023 — 2024",
+    role: "Web Application & Software Engineer",
+    organization: "Web & CBT Systems Development",
+    description: "Engineered scalable computer-based testing (CBT) systems, interactive portals, and web utilities delivering sub-second response times and high availability.",
+    badges: ["Full-Stack", "JavaScript", "Database Design", "Security & Auth"]
+  },
+  {
+    period: "2021 — 2023",
+    role: "Software Engineering & Systems Foundation",
     organization: "ALX Software Engineering Program",
-    description: "Mastered low-level systems engineering in C, backend microservices, Linux systems administration, DevOps automation, and scalable web architectures.",
-    badges: ["C Programming", "Linux / Bash", "DevOps & CI/CD", "Web Architecture"]
+    description: "Comprehensive software engineering curriculum covering low-level C programming, DevOps, Linux system administration, and distributed architecture.",
+    badges: ["C", "Linux / Bash", "DevOps", "Data Structures & Algorithms"]
   }
 ];
