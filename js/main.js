@@ -12,22 +12,94 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
   const modalBackdrop = document.getElementById('project-modal');
   const modalCloseBtn = document.getElementById('modal-close-btn');
+  const modalEditLink = document.getElementById('modal-edit-link');
   const copyEmailBtn = document.getElementById('copy-email-btn');
   const contactForm = document.getElementById('contact-form');
   const toastContainer = document.getElementById('toast-container');
   const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
 
-  // Add Project Elements
+  // Add / Edit Project Elements
   const openAddProjectBtn = document.getElementById('open-add-project-btn');
   const addProjectModal = document.getElementById('add-project-modal');
   const closeAddModalBtn = document.getElementById('close-add-modal-btn');
   const addProjectForm = document.getElementById('add-project-form');
   const copyProjectCodeBtn = document.getElementById('copy-project-code-btn');
 
+  // Edit Profile & Picture Elements
+  const openProfileEditNavBtn = document.getElementById('open-profile-edit-nav-btn');
+  const openProfileEditHeroBtn = document.getElementById('open-profile-edit-hero-btn');
+  const openProfileEditMobileBtn = document.getElementById('open-profile-edit-mobile-btn');
+  const avatarBadgeEditBtn = document.getElementById('avatar-badge-edit-btn');
+  const heroAvatarWrapper = document.getElementById('hero-avatar-wrapper');
+  const profileEditModal = document.getElementById('profile-edit-modal');
+  const profileModalCloseBtn = document.getElementById('profile-modal-close-btn');
+  const profileEditForm = document.getElementById('profile-edit-form');
+  const editAvatarFile = document.getElementById('edit-avatar-file');
+  const editAvatarUrl = document.getElementById('edit-avatar-url');
+  const editPreviewAvatar = document.getElementById('edit-preview-avatar');
+  const resetAvatarBtn = document.getElementById('reset-avatar-btn');
+  const resetAllProfileBtn = document.getElementById('reset-all-profile-btn');
+  const exportProfileCodeBtn = document.getElementById('export-profile-code-btn');
+
   let activeCategory = 'all';
   let searchQuery = '';
+  let editingProjectId = null;
+  let currentDetailProjectId = null;
 
-  // 1. Load Custom Projects from localStorage
+  // Default Profile Configuration
+  const defaultProfile = {
+    name: "Ayoola Adebisi",
+    initials: "AA",
+    avatar: "assets/images/avatar.jpg",
+    status: "Available for Web App Contracts & Full-Time Roles",
+    headlineStart: "Architecting High-Impact",
+    headlineAccent: "Web Applications That Scale.",
+    bio: "Senior Full-Stack Developer specializing in high-performance web apps, enterprise SaaS platforms, and distributed cloud systems. Explore live deployments, architectures, and source code below.",
+    email: "ayoolaadebisi5@gmail.com",
+    github: "https://github.com/Ayoola1o",
+    linkedin: "https://linkedin.com",
+    twitter: "https://x.com"
+  };
+
+  let currentProfile = { ...defaultProfile };
+  try {
+    const savedProf = localStorage.getItem('ayoola_profile_data');
+    if (savedProf) {
+      currentProfile = { ...defaultProfile, ...JSON.parse(savedProf) };
+    }
+  } catch (err) {
+    console.warn('Could not load profile from localStorage', err);
+  }
+
+  function applyProfile(p) {
+    const brandName = document.getElementById('brand-logo-name');
+    const brandInitials = document.getElementById('brand-logo-initials');
+    const heroStatus = document.getElementById('hero-status-text');
+    const heroTitleText = document.getElementById('hero-title-text');
+    const heroTitleAccent = document.getElementById('hero-title-accent');
+    const heroDesc = document.getElementById('hero-desc-text');
+    const heroAvatar = document.getElementById('hero-avatar-img');
+    const emailText = document.getElementById('email-address-text');
+    const githubLink = document.getElementById('contact-github-link');
+    const linkedinLink = document.getElementById('contact-linkedin-link');
+    const twitterLink = document.getElementById('contact-x-link');
+    const footerCopy = document.getElementById('footer-copy-text');
+
+    if (brandName) brandName.textContent = p.name;
+    if (brandInitials) brandInitials.textContent = p.initials || p.name.split(' ').map(n => n[0]).join('').slice(0, 3).toUpperCase();
+    if (heroStatus) heroStatus.textContent = p.status;
+    if (heroTitleText) heroTitleText.textContent = p.headlineStart || p.headline || '';
+    if (heroTitleAccent) heroTitleAccent.textContent = p.headlineAccent || '';
+    if (heroDesc) heroDesc.textContent = p.bio;
+    if (heroAvatar && p.avatar) heroAvatar.src = p.avatar;
+    if (emailText) emailText.textContent = p.email;
+    if (githubLink && p.github) githubLink.href = p.github;
+    if (linkedinLink && p.linkedin) linkedinLink.href = p.linkedin;
+    if (twitterLink && p.twitter) twitterLink.href = p.twitter;
+    if (footerCopy) footerCopy.textContent = `© 2026 ${p.name}. Built for web application showcases. Deployed with sub-second performance.`;
+  }
+
+  // 1. Load Custom Projects and Base Project Overrides from localStorage
   let customProjects = [];
   try {
     const savedCustom = localStorage.getItem('ayoola_custom_projects');
@@ -38,9 +110,25 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn('Could not load custom projects from localStorage', err);
   }
 
+  let projectOverrides = {};
+  try {
+    const savedOverrides = localStorage.getItem('ayoola_project_overrides');
+    if (savedOverrides) {
+      projectOverrides = JSON.parse(savedOverrides);
+    }
+  } catch (err) {
+    console.warn('Could not load project overrides from localStorage', err);
+  }
+
   function getAllProjects() {
     const baseProjects = (typeof portfolioProjects !== 'undefined') ? portfolioProjects : [];
-    return [...customProjects, ...baseProjects];
+    const mappedBase = baseProjects.map(p => {
+      if (projectOverrides[p.id]) {
+        return { ...p, ...projectOverrides[p.id] };
+      }
+      return p;
+    });
+    return [...customProjects, ...mappedBase];
   }
 
   // 2. Theme Management (Dark by default)
@@ -148,9 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ${project.status}
           </span>
           ${project.isCustom ? `
-            <button class="delete-custom-btn" data-id="${project.id}" title="Remove this custom project" style="position: absolute; top: 14px; left: 14px; background: rgba(239, 68, 68, 0.85); color: white; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px; backdrop-filter: blur(4px);">
+            <button class="delete-custom-btn" data-id="${project.id}" title="Remove this project" style="position: absolute; top: 14px; left: 14px; background: rgba(239, 68, 68, 0.85); color: white; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px; backdrop-filter: blur(4px);">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              Remove
+              Delete
             </button>
           ` : ''}
         </div>
@@ -179,20 +267,26 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div class="project-actions">
-            <button class="btn-card-action btn-detail open-modal-btn" data-id="${project.id}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button class="btn-card-action btn-detail open-modal-btn" data-id="${project.id}" title="View details and architecture">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
                 <circle cx="12" cy="12" r="3"/>
               </svg>
-              Details & Specs
+              Specs
             </button>
-            <a href="${project.liveUrl || '#'}" target="_blank" rel="noopener noreferrer" class="btn-card-action btn-demo">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button class="btn-card-action edit-project-btn" data-id="${project.id}" style="background-color: var(--bg-surface-elevated); color: var(--accent-cyan); border: 1px solid var(--border-subtle);" title="Edit this project">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+              </svg>
+              Edit
+            </button>
+            <a href="${project.liveUrl || '#'}" target="_blank" rel="noopener noreferrer" class="btn-card-action btn-demo" title="Launch live web application">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                 <polyline points="15 3 21 3 21 9"/>
                 <line x1="10" y1="14" x2="21" y2="3"/>
               </svg>
-              Live Demo
+              Demo
             </a>
           </div>
         </div>
@@ -207,12 +301,21 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    // Attach listeners to "Edit" buttons on cards
+    document.querySelectorAll('.edit-project-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = e.currentTarget.getAttribute('data-id');
+        openEditProjectModal(id);
+      });
+    });
+
     // Attach listeners to custom project delete buttons
     document.querySelectorAll('.delete-custom-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = e.currentTarget.getAttribute('data-id');
-        if (confirm('Remove this custom project from your view?')) {
+        if (confirm('Delete this project from your portfolio?')) {
           customProjects = customProjects.filter(p => p.id !== id);
           localStorage.setItem('ayoola_custom_projects', JSON.stringify(customProjects));
           renderProjects();
@@ -243,6 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function openProjectModal(projectId) {
     const project = getAllProjects().find(p => p.id === projectId);
     if (!project || !modalBackdrop) return;
+
+    currentDetailProjectId = projectId;
 
     const modalTitle = document.getElementById('modal-title');
     const modalCategory = document.getElementById('modal-category');
@@ -313,35 +418,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 7. Add Project Modal Dialog Logic
-  if (openAddProjectBtn && addProjectModal) {
-    openAddProjectBtn.addEventListener('click', () => {
-      addProjectModal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    });
-  }
-
-  function closeAddModal() {
-    if (!addProjectModal) return;
-    addProjectModal.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  if (closeAddModalBtn) closeAddModalBtn.addEventListener('click', closeAddModal);
-  if (addProjectModal) {
-    addProjectModal.addEventListener('click', (e) => {
-      if (e.target === addProjectModal) closeAddModal();
-    });
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
+  if (modalEditLink) {
+    modalEditLink.addEventListener('click', () => {
       closeModal();
-      closeAddModal();
-    }
-  });
+      if (currentDetailProjectId) {
+        openEditProjectModal(currentDetailProjectId);
+      }
+    });
+  }
 
-  // 7. Add Project Modal Dialog Logic & File Upload / GitHub Import
+  // 7. Add & Edit Project Modal Dialog Logic
   let uploadedImageData = '';
 
   const newProjectFile = document.getElementById('new-project-file');
@@ -352,7 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const removeImageBtn = document.getElementById('remove-image-btn');
   const fileUploadLabel = document.getElementById('file-upload-label');
 
-  // Handle Image File Upload (via input or drag-and-drop)
   function processUploadedFile(file) {
     if (!file || !file.type.startsWith('image/')) {
       showToast('Please select a valid image file (PNG, JPG, WebP)');
@@ -363,7 +448,6 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
-        // Optimize/resize image with Canvas to save localStorage quota
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
@@ -431,6 +515,8 @@ document.addEventListener('DOMContentLoaded', () => {
     removeImageBtn.addEventListener('click', () => {
       uploadedImageData = '';
       if (newProjectFile) newProjectFile.value = '';
+      const urlInput = document.getElementById('new-project-image');
+      if (urlInput) urlInput.value = '';
       if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
       if (fileUploadLabel) fileUploadLabel.textContent = '📁 Upload Image File';
     });
@@ -471,7 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const data = await res.json();
 
-      // Populate form fields
       const titleInput = document.getElementById('new-project-title');
       const taglineInput = document.getElementById('new-project-tagline');
       const summaryInput = document.getElementById('new-project-summary');
@@ -501,7 +586,6 @@ document.addEventListener('DOMContentLoaded', () => {
         yearInput.value = new Date(data.created_at).getFullYear();
       }
 
-      // Tech stack from primary language + topics
       let stack = [];
       if (data.language) stack.push(data.language);
       if (data.topics && Array.isArray(data.topics)) {
@@ -510,7 +594,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (stack.length === 0) stack = ["TypeScript", "Next.js", "WebSockets"];
       if (techInput) techInput.value = stack.slice(0, 6).join(', ');
 
-      // Intelligent Category Detection
       const combinedText = ((data.name || '') + ' ' + (data.description || '') + ' ' + (data.topics || []).join(' ')).toLowerCase();
       if (categorySelect) {
         if (combinedText.includes('ai') || combinedText.includes('market') || combinedText.includes('quant') || combinedText.includes('trader') || combinedText.includes('predict')) {
@@ -524,7 +607,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Highlights
       if (highlightsInput) {
         highlightsInput.value = [
           `Open source codebase with ${data.stargazers_count || 0} stars and ${data.forks_count || 0} forks on GitHub`,
@@ -560,7 +642,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Load My Repos Dropdown
   if (loadMyReposBtn && githubRepoSelectContainer && githubRepoSelect) {
     loadMyReposBtn.addEventListener('click', async () => {
       githubRepoSelectContainer.style.display = 'block';
@@ -589,6 +670,127 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Open in Add Mode
+  if (openAddProjectBtn && addProjectModal) {
+    openAddProjectBtn.addEventListener('click', () => {
+      editingProjectId = null;
+      const addModalTitle = document.getElementById('add-modal-title');
+      const addModalSubtitle = document.getElementById('add-modal-subtitle');
+      const submitBtn = addProjectForm.querySelector('button[type="submit"]');
+
+      if (addModalTitle) addModalTitle.textContent = "Add Web Application";
+      if (addModalSubtitle) addModalSubtitle.textContent = "Instantly showcases on your live portfolio";
+      if (submitBtn) {
+        submitBtn.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add to Live Portfolio
+        `;
+      }
+      if (addProjectForm) addProjectForm.reset();
+      uploadedImageData = '';
+      if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+      if (fileUploadLabel) fileUploadLabel.textContent = '📁 Upload Image File';
+
+      addProjectModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  // Open in Edit Mode
+  function openEditProjectModal(projectId) {
+    const project = getAllProjects().find(p => p.id === projectId);
+    if (!project || !addProjectModal) return;
+
+    editingProjectId = projectId;
+
+    const addModalTitle = document.getElementById('add-modal-title');
+    const addModalSubtitle = document.getElementById('add-modal-subtitle');
+    const submitBtn = addProjectForm.querySelector('button[type="submit"]');
+
+    if (addModalTitle) addModalTitle.textContent = "Edit Web Application";
+    if (addModalSubtitle) addModalSubtitle.textContent = `Editing: ${project.title}`;
+    if (submitBtn) {
+      submitBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Save Changes
+      `;
+    }
+
+    // Pre-fill form values
+    const titleInput = document.getElementById('new-project-title');
+    const categorySelect = document.getElementById('new-project-category');
+    const taglineInput = document.getElementById('new-project-tagline');
+    const statusSelect = document.getElementById('new-project-status');
+    const yearInput = document.getElementById('new-project-year');
+    const liveInput = document.getElementById('new-project-live');
+    const githubInput = document.getElementById('new-project-github');
+    const techInput = document.getElementById('new-project-tech');
+    const urlImageInput = document.getElementById('new-project-image');
+    const summaryInput = document.getElementById('new-project-summary');
+    const highlightsInput = document.getElementById('new-project-highlights');
+
+    if (titleInput) titleInput.value = project.title || '';
+    if (categorySelect) categorySelect.value = project.category || 'ai';
+    if (taglineInput) taglineInput.value = project.tagline || '';
+    if (statusSelect) statusSelect.value = project.status || 'Production Live';
+    if (yearInput) yearInput.value = project.year || '2026';
+    if (liveInput) liveInput.value = project.liveUrl && project.liveUrl !== '#' ? project.liveUrl : '';
+    if (githubInput) githubInput.value = project.githubUrl && project.githubUrl !== '#' ? project.githubUrl : '';
+    if (techInput) techInput.value = (project.techStack || []).join(', ');
+    if (summaryInput) summaryInput.value = project.summary || '';
+    if (highlightsInput) highlightsInput.value = (project.highlights || []).join('\n');
+
+    // Handle image preview
+    if (project.image) {
+      if (project.image.startsWith('data:')) {
+        uploadedImageData = project.image;
+        if (urlImageInput) urlImageInput.value = '';
+      } else {
+        uploadedImageData = '';
+        if (urlImageInput) urlImageInput.value = project.image;
+      }
+      if (imagePreviewContainer && imagePreviewImg) {
+        imagePreviewImg.src = project.image;
+        imagePreviewContainer.style.display = 'flex';
+        if (imagePreviewName) imagePreviewName.textContent = 'Current Project Image';
+      }
+    } else {
+      uploadedImageData = '';
+      if (urlImageInput) urlImageInput.value = '';
+      if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+    }
+
+    addProjectModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAddModal() {
+    if (!addProjectModal) return;
+    addProjectModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  if (closeAddModalBtn) closeAddModalBtn.addEventListener('click', closeAddModal);
+  if (addProjectModal) {
+    addProjectModal.addEventListener('click', (e) => {
+      if (e.target === addProjectModal) closeAddModal();
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+      closeAddModal();
+    }
+  });
+
   function getProjectFromForm() {
     const title = document.getElementById('new-project-title').value.trim();
     const category = document.getElementById('new-project-category').value;
@@ -602,7 +804,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const summary = document.getElementById('new-project-summary').value.trim();
     const highlightsRaw = document.getElementById('new-project-highlights').value.trim();
 
-    // Use uploaded image file data first, then URL, then fallback template
     const finalImage = uploadedImageData || urlImage || 'assets/images/project-saas.jpg';
 
     const techStack = techRaw.split(',').map(s => s.trim()).filter(Boolean);
@@ -622,7 +823,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'Open Source': 'cyan'
     };
 
-    const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || ('project-' + Date.now());
+    const id = editingProjectId || (title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || ('project-' + Date.now()));
 
     return {
       id,
@@ -655,18 +856,46 @@ document.addEventListener('DOMContentLoaded', () => {
   if (addProjectForm) {
     addProjectForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const newProj = getProjectFromForm();
-      if (!newProj.title) return;
+      const projectData = getProjectFromForm();
+      if (!projectData.title) return;
 
-      customProjects.unshift(newProj);
-      localStorage.setItem('ayoola_custom_projects', JSON.stringify(customProjects));
-      renderProjects();
-      closeAddModal();
-      addProjectForm.reset();
-      uploadedImageData = '';
-      if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
-      if (fileUploadLabel) fileUploadLabel.textContent = '📁 Upload Image File';
-      showToast(`🎉 "${newProj.title}" added to your live portfolio!`);
+      if (editingProjectId) {
+        // Update existing project
+        projectData.id = editingProjectId;
+
+        const customIdx = customProjects.findIndex(p => p.id === editingProjectId);
+        if (customIdx !== -1) {
+          customProjects[customIdx] = { ...customProjects[customIdx], ...projectData, isCustom: true };
+          localStorage.setItem('ayoola_custom_projects', JSON.stringify(customProjects));
+        } else {
+          projectOverrides[editingProjectId] = projectData;
+          localStorage.setItem('ayoola_project_overrides', JSON.stringify(projectOverrides));
+        }
+
+        renderProjects();
+        closeAddModal();
+        addProjectForm.reset();
+        uploadedImageData = '';
+        if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+        showToast(`✓ "${projectData.title}" updated successfully!`);
+
+        // If details modal was open for this project, update it
+        if (currentDetailProjectId === editingProjectId && modalBackdrop && modalBackdrop.classList.contains('open')) {
+          openProjectModal(editingProjectId);
+        }
+        editingProjectId = null;
+      } else {
+        // Add new project
+        customProjects.unshift(projectData);
+        localStorage.setItem('ayoola_custom_projects', JSON.stringify(customProjects));
+        renderProjects();
+        closeAddModal();
+        addProjectForm.reset();
+        uploadedImageData = '';
+        if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+        if (fileUploadLabel) fileUploadLabel.textContent = '📁 Upload Image File';
+        showToast(`🎉 "${projectData.title}" added to your live portfolio!`);
+      }
     });
   }
 
@@ -679,7 +908,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const cleanProj = { ...newProj };
       delete cleanProj.isCustom;
-      // If uploaded image was base64, advise on storing in assets
       if (cleanProj.image && cleanProj.image.startsWith('data:')) {
         cleanProj.image = 'assets/images/your-screenshot.jpg';
       }
@@ -809,6 +1037,186 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // =========================================================================
+  // 13. Profile & Picture Editor Logic
+  // =========================================================================
+  let tempAvatar = currentProfile.avatar;
+
+  function openProfileModal() {
+    if (!profileEditModal) return;
+
+    tempAvatar = currentProfile.avatar;
+    const nameInput = document.getElementById('edit-name');
+    const initialsInput = document.getElementById('edit-initials');
+    const statusInput = document.getElementById('edit-status');
+    const headStartInput = document.getElementById('edit-headline-start');
+    const headAccentInput = document.getElementById('edit-headline-accent');
+    const bioInput = document.getElementById('edit-bio');
+    const emailInput = document.getElementById('edit-email');
+    const githubInput = document.getElementById('edit-github');
+    const linkedinInput = document.getElementById('edit-linkedin');
+    const xInput = document.getElementById('edit-x');
+
+    if (nameInput) nameInput.value = currentProfile.name || '';
+    if (initialsInput) initialsInput.value = currentProfile.initials || '';
+    if (statusInput) statusInput.value = currentProfile.status || '';
+    if (headStartInput) headStartInput.value = currentProfile.headlineStart || '';
+    if (headAccentInput) headAccentInput.value = currentProfile.headlineAccent || '';
+    if (bioInput) bioInput.value = currentProfile.bio || '';
+    if (emailInput) emailInput.value = currentProfile.email || '';
+    if (githubInput) githubInput.value = currentProfile.github || '';
+    if (linkedinInput) linkedinInput.value = currentProfile.linkedin || '';
+    if (xInput) xInput.value = currentProfile.twitter || '';
+
+    if (editPreviewAvatar) editPreviewAvatar.src = currentProfile.avatar;
+    if (editAvatarUrl) editAvatarUrl.value = currentProfile.avatar.startsWith('http') ? currentProfile.avatar : '';
+    if (editAvatarFile) editAvatarFile.value = '';
+
+    profileEditModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProfileModal() {
+    if (!profileEditModal) return;
+    profileEditModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  if (openProfileEditNavBtn) openProfileEditNavBtn.addEventListener('click', openProfileModal);
+  if (openProfileEditHeroBtn) openProfileEditHeroBtn.addEventListener('click', openProfileModal);
+  if (openProfileEditMobileBtn) {
+    openProfileEditMobileBtn.addEventListener('click', () => {
+      if (mobileNavDrawer) mobileNavDrawer.classList.remove('open');
+      openProfileModal();
+    });
+  }
+  if (avatarBadgeEditBtn) avatarBadgeEditBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openProfileModal();
+  });
+  if (heroAvatarWrapper) heroAvatarWrapper.addEventListener('click', openProfileModal);
+  if (profileModalCloseBtn) profileModalCloseBtn.addEventListener('click', closeProfileModal);
+  if (profileEditModal) {
+    profileEditModal.addEventListener('click', (e) => {
+      if (e.target === profileEditModal) closeProfileModal();
+    });
+  }
+
+  // Handle Photo File Upload
+  if (editAvatarFile) {
+    editAvatarFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 4 * 1024 * 1024) {
+        showToast('⚠️ Image is larger than 4MB, please select a smaller photo');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (uploadEv) => {
+        tempAvatar = uploadEv.target.result;
+        if (editPreviewAvatar) editPreviewAvatar.src = tempAvatar;
+        if (editAvatarUrl) editAvatarUrl.value = '';
+        showToast('✓ Photo loaded into preview');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Handle Image URL input
+  if (editAvatarUrl) {
+    editAvatarUrl.addEventListener('input', (e) => {
+      const url = e.target.value.trim();
+      if (url) {
+        tempAvatar = url;
+        if (editPreviewAvatar) editPreviewAvatar.src = url;
+      }
+    });
+  }
+
+  // Reset Avatar picture
+  if (resetAvatarBtn) {
+    resetAvatarBtn.addEventListener('click', () => {
+      tempAvatar = defaultProfile.avatar;
+      if (editPreviewAvatar) editPreviewAvatar.src = tempAvatar;
+      if (editAvatarUrl) editAvatarUrl.value = '';
+      if (editAvatarFile) editAvatarFile.value = '';
+      showToast('Picture reset to default image');
+    });
+  }
+
+  // Handle Profile Form Submit (Save)
+  if (profileEditForm) {
+    profileEditForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('edit-name').value.trim();
+      const initials = document.getElementById('edit-initials').value.trim().toUpperCase();
+      const status = document.getElementById('edit-status').value.trim();
+      const headlineStart = document.getElementById('edit-headline-start').value.trim();
+      const headlineAccent = document.getElementById('edit-headline-accent').value.trim();
+      const bio = document.getElementById('edit-bio').value.trim();
+      const email = document.getElementById('edit-email').value.trim();
+      const github = document.getElementById('edit-github').value.trim();
+      const linkedin = document.getElementById('edit-linkedin').value.trim();
+      const twitter = document.getElementById('edit-x').value.trim();
+
+      currentProfile = {
+        name,
+        initials,
+        avatar: tempAvatar || defaultProfile.avatar,
+        status,
+        headlineStart,
+        headlineAccent,
+        bio,
+        email,
+        github,
+        linkedin,
+        twitter
+      };
+
+      try {
+        localStorage.setItem('ayoola_profile_data', JSON.stringify(currentProfile));
+      } catch (storageErr) {
+        console.warn('Could not save to localStorage', storageErr);
+      }
+
+      applyProfile(currentProfile);
+      closeProfileModal();
+      showToast('🎉 Profile & Picture updated successfully!');
+    });
+  }
+
+  // Reset all profile data
+  if (resetAllProfileBtn) {
+    resetAllProfileBtn.addEventListener('click', () => {
+      if (confirm('Reset profile to default values?')) {
+        localStorage.removeItem('ayoola_profile_data');
+        currentProfile = { ...defaultProfile };
+        applyProfile(currentProfile);
+        closeProfileModal();
+        showToast('Profile reset to default values.');
+      }
+    });
+  }
+
+  // Export profile code
+  if (exportProfileCodeBtn) {
+    exportProfileCodeBtn.addEventListener('click', () => {
+      const exportJson = JSON.stringify(currentProfile, null, 2);
+      navigator.clipboard.writeText(exportJson).then(() => {
+        showToast('📋 Profile JSON copied to clipboard!');
+      }).catch(() => {
+        showToast('Export ready');
+      });
+    });
+  }
+
+  // Apply profile immediately on initial load
+  applyProfile(currentProfile);
+
   // Initial render
   renderProjects();
 });
+
